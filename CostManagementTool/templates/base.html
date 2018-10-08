@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .InputAddOn {
+        display: flex;
+    }
+
+    .InputAddOn-field {
+        flex: 1;
+        /* field styles */
+    }
+
+    .InputAddOn-item {
+        /* item styles */
+    }
+
+</style>
+<body>
+{% load bootstrap_themes %}
+{% load dashboard_tags %}
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+{% bootstrap_styles theme=request|get_user_theme type='min.css' %}
+{% bootstrap_script %}
+
+{% get_themes as themes %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Cost Mananagement Tool</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        {% if request.user.is_anonymous == False %}
+            <form class="navbar-form navbar-right" action='{% url 'dashboard:change-theme' request.user.id %}'
+                  method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <div class="form-group">
+                    <div class="InputAddOn"><span class="InputAddOn-item"><span class="icon icon-lock"></span></span>
+                        <select class="form-control InputAddOn-field" name="theme">
+                            {% for theme in themes %}
+                                <option>
+                                    {{ theme.0 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    &nbsp;
+                        <button class="btn btn-primary btn-sm InputAddOn-item" type="submit">Change theme</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+</body>
+</html>
