@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="alert-success">{{ message }}</div>
+    <form action="{% url 'dashboard:upload-file' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="excel_file" accept=".xlsx, .xls">
+        <input type="submit" name="input_button" value="UPLOAD" class="btn btn-primary">
+    </form>
+    {% if txt %}
+        <!--TEXT-AREA-->
+        <textarea id="textBox1" name="content" onkeyup="setHeight('textBox1');"
+                  onkeydown="setHeight('textBox1');" style="width:100%;">{{ txt }}</textarea>
+
+        <!--JAVASCRIPT-->
+        <script type="text/javascript">
+            function setHeight(fieldId) {
+                document.getElementById(fieldId).style.height = document.getElementById(fieldId).scrollHeight + 'px';
+            }
+            setHeight('textBox1');
+        </script>
+    {% endif %}
+{% endblock %}
