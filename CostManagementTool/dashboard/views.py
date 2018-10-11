@@ -37,11 +37,10 @@ def update_details(request):
                     tmp.write(excel_file.read())
                 book = xlrd.open_workbook(path)
                 sheet_names = book.sheet_names()
-                for book_name in sheet_names:
+                for sheet_name in sheet_names:
                     txt += ('-' * 40) + '\n'
-                    txt += book_name + '\n'
-                    txt += ('-' * 40) + '\n'
-                    sheet = book.sheet_by_name(book_name)
+                    txt += sheet_name + '\n'
+                    sheet = book.sheet_by_name(sheet_name)
                     row = sheet.row(0)  # 1st row
                     headers = []
 
@@ -53,10 +52,10 @@ def update_details(request):
                     num_cols = sheet.ncols  # Number of columns
                     for row_idx in range(1, sheet.nrows):  # Iterate through rows
                         txt += ('-' * 40) + '\n'
-                        txt += ('Row: %s' % row_idx) + '\n' + '\n'  # Print row number
+                        txt += ('Row: %s' % row_idx) + '\n'  # Print row number
                         for col_idx in range(0, num_cols):  # Iterate through columns
                             cell_obj = sheet.cell(row_idx, col_idx)  # Get cell object by row, col
-                            txt += ('Column: [%s] cell_obj: [%s]' % (headers[col_idx], cell_obj.value)) + '\n'
+                            txt += ('%s: %s' % (headers[col_idx], cell_obj.value)) + '\n'
 
             finally:
                 os.remove(path)
