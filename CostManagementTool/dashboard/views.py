@@ -31,31 +31,44 @@ def update_details(request):
         if form.is_bound:
             # import your django model here like from django.appname.models import model_name
             excel_file = request.FILES['excel_file']
+            initial_row = int(request.POST['initial_row'])
+            final_row = int(request.POST['final_row'])
+            sheet_names = str(request.POST['sheet_names'])
+            if ';' not in sheet_names:
+                sheet_names += ';'
+            sheet_names = filter(None, sheet_names.split(';'))
             try:
                 fd, path = tempfile.mkstemp()
                 with os.fdopen(fd, 'wb') as tmp:
                     tmp.write(excel_file.read())
                 book = xlrd.open_workbook(path)
-                sheet_names = book.sheet_names()
+                # sheet_names = book.sheet_names()
+                # sheet_names = ['Sistema Operativo']
                 for sheet_name in sheet_names:
                     txt += ('-' * 40) + '\n'
                     txt += sheet_name + '\n'
-                    sheet = book.sheet_by_name(sheet_name)
-                    row = sheet.row(0)  # 1st row
-                    headers = []
+                    try:
+                        sheet = book.sheet_by_name(sheet_name)
+                        row = sheet.row(initial_row - 1)  # 1st row
+                        headers = []
+                        for idx, cell_obj in enumerate(row):
+                            headers.append(cell_obj.value)
 
-                    for idx, cell_obj in enumerate(row):
-                        headers.append(cell_obj.value)
-
-                    # Print all values, iterating through rows and columns
-                    #
-                    num_cols = sheet.ncols  # Number of columns
-                    for row_idx in range(1, sheet.nrows):  # Iterate through rows
-                        txt += ('-' * 40) + '\n'
-                        txt += ('Row: %s' % row_idx) + '\n'  # Print row number
-                        for col_idx in range(0, num_cols):  # Iterate through columns
-                            cell_obj = sheet.cell(row_idx, col_idx)  # Get cell object by row, col
-                            txt += ('%s: %s' % (headers[col_idx], cell_obj.value)) + '\n'
+                        # Print all values, iterating through rows and columns
+                        #
+                        num_cols = sheet.ncols  # Number of columns
+                        if final_row == 0:
+                            num_rows = sheet.nrows
+                        else:
+                            num_rows = final_row
+                        for row_idx in range(initial_row, num_rows):  # Iterate through rows
+                            txt += ('-' * 40) + '\n'
+                            txt += ('Row: %s' % str(row_idx + 1)) + '\n'  # Print row number
+                            for col_idx in range(0, num_cols):  # Iterate through columns
+                                cell_obj = sheet.cell(row_idx, col_idx)  # Get cell object by row, col
+                                txt += ('%s: %s' % (headers[col_idx], cell_obj.value)) + '\n'
+                    except:
+                        txt += "Invalid sheet name \n"
 
             finally:
                 os.remove(path)

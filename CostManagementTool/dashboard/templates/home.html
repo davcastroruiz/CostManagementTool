@@ -1,13 +1,44 @@
 {% extends 'base.html' %}
+{% block title %}
+    Load XLSX
+{% endblock %}
 {% block body %}
     <div class="alert-success">{{ message }}</div>
+    <style>
+        .btn-primary:hover {
+            background: #fff;
+            color: #0171c5;
+        }
+    </style>
     <form action="{% url 'dashboard:upload-file' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="excel_file" accept=".xlsx, .xls">
-        <input type="submit" name="input_button" value="UPLOAD" class="btn btn-primary">
+        <input type="file" name="excel_file" accept=".xlsx, .xls" class="form-control" required>
+        <br>
+        <div class="row">
+            <div class="col-sm-3">
+                <input type="number" name="initial_row"
+                       placeholder="Headers row: 0"
+                       min="1" class="form-control" required/>
+            </div>
+            <div class="col-sm-3">
+                <input type="number" name="final_row"
+                       placeholder="Final row to read - Set 0 to read all"
+                       min="0" class="form-control" required/>
+            </div>
+            <div class="col-sm-3">
+                <input type="text" name="sheet_names"
+                       placeholder="Separated with ; each sheet name"
+                       class="form-control" required/>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" name="input_button" value="UPLOAD" class="form-control btn btn-primary">
+            </div>
+        </div>
     </form>
     {% if txt %}
         <!--TEXT-AREA-->
+        <hr>
+        <br>
         <textarea id="textBox1" name="content" onkeyup="setHeight('textBox1');"
                   onkeydown="setHeight('textBox1');" style="width:100%;">{{ txt }}</textarea>
 
@@ -16,6 +47,7 @@
             function setHeight(fieldId) {
                 document.getElementById(fieldId).style.height = document.getElementById(fieldId).scrollHeight + 'px';
             }
+
             setHeight('textBox1');
         </script>
     {% endif %}
