@@ -18,3 +18,12 @@ class Theme(models.Model):
     def __str__(self):
         return self.user.username + ' is using: ' + self.theme
 
+
+class Project(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(max_length=50, default='default')
+    owner = models.TextField(max_length=50, blank=True)
+    email = models.EmailField(max_length=254)
+
+    def __str__(self):
+        return self.owner + ': ' + self.name

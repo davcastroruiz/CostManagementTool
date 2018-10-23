@@ -9,13 +9,12 @@ from models import Theme
 import xlrd
 
 
-def index(request):
-    return render(request, 'home.html')
+def dashboard(request):
+    return render(request, 'dashboard.html')
 
 
-def change_theme(request, user):
-    theme = request.POST.get('theme')
-    current_theme = Theme.objects.get(user=user)
+def change_theme(request, theme):
+    current_theme = Theme.objects.get(user=request.user)
     current_theme.theme = theme
     current_theme.save()
     next_page = request.POST.get('next', '/')
@@ -43,7 +42,6 @@ def update_details(request):
                     tmp.write(excel_file.read())
                 book = xlrd.open_workbook(path)
                 # sheet_names = book.sheet_names()
-                # sheet_names = ['Sistema Operativo']
                 for sheet_name in sheet_names:
                     txt += ('-' * 40) + '\n'
                     txt += sheet_name + '\n'
@@ -76,4 +74,4 @@ def update_details(request):
             message = 'Invalid Entries'
     dictionary = dict(request=request, message=message, txt=txt)
     dictionary.update(csrf(request))
-    return render_to_response('home.html', dictionary)
+    return render_to_response('utilities/load_excel.html', dictionary)
