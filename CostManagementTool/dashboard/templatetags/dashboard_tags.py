@@ -1,7 +1,7 @@
 from django import template
 from bootstrap_themes import list_themes
 
-from dashboard.models import Theme
+from dashboard.models import Theme, Project
 
 register = template.Library()
 
@@ -19,3 +19,8 @@ def get_user_theme(request):
         return obj.theme
     except:
         return 'default'
+
+
+@register.simple_tag
+def projects():
+    return Project.objects.all()

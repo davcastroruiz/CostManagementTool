@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load dashboard_tags %}
+{% block title %}
+    Cost Management Tool
+{% endblock %}
+{% block body %}
+    <!-- Split button -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-default">Add Project</button>
+        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#">Add Fields</a></li>
+            <li><a href="#">Assign Fields</a></li>
+        </ul>
+    </div>
+    <br>
+    <br>
+    <h2>Dev links</h2>
+    <a href="{% url 'dashboard:upload-file' %}">load excel</a>
+    {% projects as projects %}
+    <div class="row">
+        {% for project in  projects %}
+            <div class="col-sm-3">
+                <div class="thumbnail">
+                    <div class="caption" style="text-align: center">
+                        <h3>{{ project.name }}</h3>
+                        <p>{{ project.owner }}</p>
+                        <p>
+                            <a href="#" class="btn btn-sm btn-primary" role="button">View</a>
+                            <a href="#"
+                               class="btn btn-sm btn-default"
+                               role="button">Remove</a>
+                            {{ project.id }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
