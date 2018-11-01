@@ -40,28 +40,39 @@
             </button>
             <a class="navbar-brand" href="{% url 'dashboard:index' %}">Cost Management Tool</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            {% if request.user.is_anonymous == False %}
-                <div class="form-group navbar-form navbar-right" style="padding-top: 5px">
-                    <div class="btn-group">
-                        <label type="button" class="btn btn-sm btn-warning" style="cursor: default">{{ request|get_user_theme }}</label>
-                        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                            <span class="caret"></span>
-                            <span class="sr-only"></span>
-                        </button>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                {% block navbar %}
+                {% endblock %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Dev Links <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">In curse</li>
+                        <li><a href="{% url 'dashboard:upload-file' %}">load excel</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">To verify</li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_anonymous == False %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Welcome, {{ request.user.username }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                        <li class="dropdown-header">User Theme</li>
+                        <li><a>{{ request|get_user_theme }}</a></li>
+                         <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">Themes</li>
                             {% for theme in themes %}
                                 <li><a href="{% url 'dashboard:change-theme' theme.0|safe %}">{{ theme.0 }}</a></li>
                             {% endfor %}
                         </ul>
-                    </div>
-                </div>
-            {% endif %}
-        </div><!-- /.navbar-collapse -->
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container-fluid">

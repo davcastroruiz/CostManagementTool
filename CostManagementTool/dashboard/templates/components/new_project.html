@@ -1,0 +1,59 @@
+<!-- The modal -->
+<div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Create a new project</h4>
+            </div>
+            <form action="{% url 'dashboard:save-project' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Product name&nbsp;</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="projectName"
+                        name="projectName" required>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Product owner</span>
+                        <select class="form-control" id="projectOwner" name="projectOwner">
+                            <option>Nora</option>
+                            <option>David</option>
+                            <option>Dulce</option>
+                            <option>Other User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" style="width: 100%"
+                                    onclick="reset_fields()">Cancel
+                            </button>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-primary"  style="width: 100%">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function reset_fields() {
+        var id1 = "projectName";
+        var id2 = "projectOwner";
+        document.getElementById(id1).value = "";
+        var selectTags = document.getElementById(id2);
+        selectTags.selectedIndex = 0;
+
+    }
+
+</script>

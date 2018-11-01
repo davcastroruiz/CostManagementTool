@@ -3,42 +3,62 @@
 {% block title %}
     Cost Management Tool
 {% endblock %}
-{% block body %}
-    <!-- Split button -->
-    <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-default">Add Project</button>
-        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only"></span>
-        </button>
+<!-- Split button -->
+{% block navbar %}
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+           aria-expanded="false">Admin <span class="caret"></span></a>
         <ul class="dropdown-menu">
-            <li><a href="#">Add Fields</a></li>
-            <li><a href="#">Assign Fields</a></li>
+            <li class="dropdown-header">Project</li>
+            <li><a href="#" data-toggle="modal" data-target="#newProject">Create new project</a></li>
+            <li><a href="#">Assign Fields to a project</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">Fields</li>
+            <li><a href="#">Create new fields</a></li>
         </ul>
-    </div>
-    <br>
-    <br>
-    <h2>Dev links</h2>
-    <a href="{% url 'dashboard:upload-file' %}">load excel</a>
+    </li>
+{% endblock %}
+{% block body %}
     {% projects as projects %}
-    <div class="row">
-        {% for project in  projects %}
-            <div class="col-sm-3">
-                <div class="thumbnail">
-                    <div class="caption" style="text-align: center">
-                        <h3>{{ project.name }}</h3>
-                        <p>{{ project.owner }}</p>
-                        <p>
-                            <a href="#" class="btn btn-sm btn-primary" role="button">View</a>
-                            <a href="#"
-                               class="btn btn-sm btn-default"
-                               role="button">Remove</a>
-                            {{ project.id }}
-                        </p>
+    {% if projects|length > 0 %}
+        <div class="row">
+            {% for project in  projects %}
+                <div class="col-sm-3">
+                    <div class="thumbnail">
+                        <div class="caption" style="text-align: center">
+                            <h3>{{ project.name }}</h3>
+                            <p>{{ project.owner }}</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <a href="#" class="btn btn-sm btn-primary" role="button"
+                                       style="width: 100%">View</a>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <form action="{% url 'dashboard:remove-project' %}" method="post"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="btn btn-sm btn-default"
+                                                role="button" value="{{ project.id }}" name="projectId"
+                                                style="width: 100%">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div align="center">
+            <h2> ༼ つ ಥ_ಥ ༽つ </h2>
+            <h3>brah! please add a project</h3>
+        </div>
+    {% endif %}
+    {% if request.user.is_anonymous == False %}
+        {% include 'components/new_project.html' %}
+    {% endif %}
 {% endblock %}
