@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load dashboard_tags %}
 {% block title %}
-    Cost Management Tool
+    Dashboard
 {% endblock %}
 <!-- Split button -->
 {% block navbar %}
@@ -11,54 +11,60 @@
         <ul class="dropdown-menu">
             <li class="dropdown-header">Project</li>
             <li><a href="#" data-toggle="modal" data-target="#newProject">Create new project</a></li>
-            <li><a href="#">Assign Fields to a project</a></li>
-            <li role="separator" class="divider"></li>
-            <li class="dropdown-header">Fields</li>
-            <li><a href="#">Create new fields</a></li>
+            <li><a href="{% url 'dashboard:admin-fields' %}">Fields</a></li>
         </ul>
     </li>
 {% endblock %}
 {% block body %}
     {% projects as projects %}
-    {% if projects|length > 0 %}
-        <div class="row">
-            {% for project in  projects %}
-                <div class="col-sm-3">
-                    <div class="thumbnail">
-                        <div class="caption" style="text-align: center">
-                            <h3>{{ project.name }}</h3>
-                            <p>{{ project.owner }}</p>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <a href="#" class="btn btn-sm btn-primary" role="button"
-                                       style="width: 100%">View</a>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">Dashboard</h1>
+        </div>
+        <div class="panel-body">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+        <br><br>
+            {% if projects|length > 0 %}
+                <div class="row">
+                    {% for project in  projects %}
+                        <div class="col-sm-3">
+                            <div class="thumbnail">
+                                <div class="caption" style="text-align: center">
+                                    <h3>{{ project.name }}</h3>
+                                    <p>{{ project.owner }}</p>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <a href="#" class="btn btn-sm btn-primary" role="button"
+                                               style="width: 100%">View</a>
 
-                                </div>
-                                <div class="col-sm-6">
-                                    <form action="{% url 'dashboard:remove-project' %}" method="post"
-                                          enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <button type="submit"
-                                                class="btn btn-sm btn-default"
-                                                role="button" value="{{ project.id }}" name="projectId"
-                                                style="width: 100%">
-                                            Remove
-                                        </button>
-                                    </form>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <form action="{% url 'dashboard:remove-project' %}" method="post"
+                                                  enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-default"
+                                                        role="button" value="{{ project.id }}" name="projectId"
+                                                        style="width: 100%">
+                                                    Remove
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            {% else %}
+                <div align="center">
+                    <h2> ༼ つ ಥ_ಥ ༽つ </h2>
+                    <h3>brah! please add a project</h3>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div align="center">
-            <h2> ༼ つ ಥ_ಥ ༽つ </h2>
-            <h3>brah! please add a project</h3>
-        </div>
-    {% endif %}
+    </div>
     {% if request.user.is_anonymous == False %}
-        {% include 'components/new_project.html' %}
+        {% include 'admin/components/new_project.html' %}
     {% endif %}
 {% endblock %}

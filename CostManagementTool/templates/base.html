@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>Cost Management Tool: {% block title %}{% endblock %}</title>
 </head>
 <style>
     .InputAddOn {
@@ -16,6 +16,13 @@
 
     .InputAddOn-item {
         /* item styles */
+    }
+
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
     }
 
 </style>
@@ -61,10 +68,10 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Welcome, {{ request.user.username }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                        <li class="dropdown-header">User Theme</li>
-                        <li><a>{{ request|get_user_theme }}</a></li>
-                         <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">Themes</li>
+                            <li class="dropdown-header">User Theme</li>
+                            <li><a>{{ request|get_user_theme }}</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Themes</li>
                             {% for theme in themes %}
                                 <li><a href="{% url 'dashboard:change-theme' theme.0|safe %}">{{ theme.0 }}</a></li>
                             {% endfor %}

@@ -89,3 +89,20 @@ def remove_project(request):
     if request.method == 'POST':
         utility.remove_project(_id=request.POST['projectId'])
     return redirect('dashboard:index')
+
+
+def fields(request):
+    return render(request, 'admin/fields.html')
+
+
+def save_field(request):
+    if request.method == 'POST':
+        utility.save_field(name=request.POST['fieldName'], type_field=request.POST['fieldType'],
+                           description=request.POST['fieldDescription'])
+    return redirect('dashboard:admin-fields')
+
+
+def remove_field(request):
+    if request.method == 'POST':
+        utility.remove_field(_id=request.POST['fieldId'])
+    return redirect('dashboard:admin-fields')

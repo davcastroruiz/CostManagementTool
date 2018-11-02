@@ -1,7 +1,7 @@
 from django import template
 from bootstrap_themes import list_themes
 
-from dashboard.models import Theme, Project
+from dashboard.models import Theme, Project, Field, Lists
 
 register = template.Library()
 
@@ -24,3 +24,13 @@ def get_user_theme(request):
 @register.simple_tag
 def projects():
     return Project.objects.all()
+
+
+@register.assignment_tag
+def get_field_types():
+    return map(list, Lists.type)
+
+
+@register.assignment_tag
+def fields():
+    return Field.objects.all()

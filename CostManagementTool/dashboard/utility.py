@@ -1,4 +1,4 @@
-from models import Project
+from models import Project, Field
 
 
 def save_project(name, owner, email):
@@ -9,3 +9,13 @@ def save_project(name, owner, email):
 def remove_project(_id):
     project = Project.objects.get(id=_id)
     project.delete()
+
+
+def save_field(name, type_field, description):
+    field = Field(name=name, type=type_field, description=description)
+    field.save()
+
+
+def remove_field(_id):
+    field = Field.objects.get(id=_id)
+    field.delete()

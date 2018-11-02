@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load dashboard_tags %}
+
+{% block title %}
+    Fields
+{% endblock %}
+<!-- Split button -->
+{% block navbar %}
+    {% fields as fields %}
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+           aria-expanded="false">Admin <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">Fields</li>
+            <li><a href="#" data-toggle="modal" data-target="#newField">Create new fields</a></li>
+
+            <li><a href="#" {% if fields|length == 0 %} class="isDisabled" {% endif %}>Assign Fields to a project</a></li>
+        </ul>
+    </li>
+{% endblock %}
+{% block body %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">Fields list</h1>
+        </div>
+        <div class="panel-body">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+            <br><br>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 15%">Field Name</th>
+                    <th style="width: 15%">Type</th>
+                    <th style="width: 65%">Description</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% fields as fields %}
+                {% for field in fields %}
+                    <tr>
+                        <td>{{ field.name }}</td>
+                        <td>{{ field.type }}</td>
+                        <td>{{ field.description }}</td>
+                        <td><form action="{% url 'dashboard:remove-field' %}" method="post"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="btn btn-sm btn-default"
+                                    role="button" value="{{ field.id }}" name="fieldId"
+                                    style="width: 100%">
+                                Remove
+                            </button>
+                        </form></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if request.user.is_anonymous == False %}
+        {% include 'admin/components/new_field.html' %}
+    {% endif %}
+{% endblock %}

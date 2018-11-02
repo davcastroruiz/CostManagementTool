@@ -1,0 +1,67 @@
+<!-- The modal -->
+{% load dashboard_tags %}
+{% get_field_types as field_types %}
+<div class="modal fade" id="newField" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modalLabel">Create a new field</h4>
+            </div>
+            <form action="{% url 'dashboard:save-field' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Name</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" id="fieldName"
+                               name="fieldName" required maxlength="20">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Type &nbsp;</span>
+                        <select class="form-control" id="fieldType" name="fieldType">
+                            {% for field_type in field_types %}
+                            <option>{{ field_type.0 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <hr>
+                        <p style="text-align: center; width: 100%">Description</p>
+                        <textarea class="form-control" maxlength="100" required  id="fieldDescription" name="fieldDescription"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" style="width: 100%"
+                                    onclick="reset_fields()">Cancel
+                            </button>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-primary" style="width: 100%">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function reset_fields() {
+        var id1 = "fieldName";
+        var id2 = "fieldType";
+        var id3 = "fieldDescription";
+        document.getElementById(id1).value = "";
+        document.getElementById(id3).value = "";
+        var selectTags = document.getElementById(id2);
+        selectTags.selectedIndex = 0;
+
+    }
+
+</script>
