@@ -14,7 +14,8 @@
             <li class="dropdown-header">Fields</li>
             <li><a href="#" data-toggle="modal" data-target="#newField">Create new fields</a></li>
 
-            <li><a href="#" {% if fields|length == 0 %} class="isDisabled" {% endif %}>Assign Fields to a project</a></li>
+            <li><a href="#" {% if fields|length == 0 %} class="isDisabled"{% else %}data-toggle="modal"
+                   data-target="#assignField" {% endif %}>Assign Fields to a project</a></li>
         </ul>
     </li>
 {% endblock %}
@@ -42,16 +43,18 @@
                         <td>{{ field.name }}</td>
                         <td>{{ field.type }}</td>
                         <td>{{ field.description }}</td>
-                        <td><form action="{% url 'dashboard:remove-field' %}" method="post"
-                              enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <button type="submit"
-                                    class="btn btn-sm btn-default"
-                                    role="button" value="{{ field.id }}" name="fieldId"
-                                    style="width: 100%">
-                                Remove
-                            </button>
-                        </form></td>
+                        <td>
+                            <form action="{% url 'dashboard:remove-field' %}" method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-sm btn-default"
+                                        role="button" value="{{ field.id }}" name="fieldId"
+                                        style="width: 100%">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -60,5 +63,6 @@
     </div>
     {% if request.user.is_anonymous == False %}
         {% include 'admin/components/new_field.html' %}
+        {% include 'admin/components/assign_fields.html' %}
     {% endif %}
 {% endblock %}
