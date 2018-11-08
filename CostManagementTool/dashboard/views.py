@@ -106,3 +106,9 @@ def remove_field(request):
     if request.method == 'POST':
         utility.remove_field(_id=request.POST['fieldId'])
     return redirect('dashboard:admin-fields')
+
+
+def assign_fields(request):
+    if request.method == 'POST':
+        print request.POST
+    return redirect('dashboard:admin-fields')

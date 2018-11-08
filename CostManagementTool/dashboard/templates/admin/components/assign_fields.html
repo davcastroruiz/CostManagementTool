@@ -16,7 +16,7 @@
                 <div class="modal-body">
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Project</span>
-                        <select class="form-control" id="fieldType" name="fieldType">
+                        <select class="form-control" id="project" name="project" required>
                             <option selected disabled>Select one project</option>
                             {% for project in projects %}
                                 <option>{{ project.name }}</option>
@@ -26,7 +26,7 @@
 
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Fields&nbsp;&nbsp;</span>
-                        <select multiple="multiple" class="form-control">
+                        <select multiple="multiple" class="form-control" id="fields" name="fields">
                             {% for field in fields %}
                                 <option> {{ field.name }} </option>
                             {% endfor %}
@@ -55,13 +55,11 @@
 <script type="text/javascript">
 
     function reset_fields() {
-        var id1 = "fieldName";
-        var id2 = "fieldType";
-        var id3 = "fieldDescription";
-        document.getElementById(id1).value = "";
-        document.getElementById(id3).value = "";
-        var selectTags = document.getElementById(id2);
+        var selectTags = document.getElementById('project');
         selectTags.selectedIndex = 0;
+
+        var selectTags2 = document.getElementById('fields');
+        selectTags2.selectedIndex = 0;
 
     }
 
