@@ -34,3 +34,8 @@ def get_field_types():
 @register.assignment_tag
 def fields():
     return Field.objects.all()
+
+
+@register.filter()
+def assigned(field_id, project):
+    return project.fields.filter(id= field_id).exists()

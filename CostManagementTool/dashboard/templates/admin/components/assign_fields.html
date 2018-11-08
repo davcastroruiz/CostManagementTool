@@ -11,15 +11,15 @@
                 </button>
                 <h4 class="modal-title" id="modalLabel">Assign fields</h4>
             </div>
-            <form action="{% url 'dashboard:save-field' %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'dashboard:assign-fields' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Project</span>
                         <select class="form-control" id="project" name="project" required>
-                            <option selected disabled>Select one project</option>
+                            <option value="" style="background-color: gainsboro">Select one project</option>
                             {% for project in projects %}
-                                <option>{{ project.name }}</option>
+                                <option value="{{ project.id }}">{{ project.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -28,7 +28,7 @@
                         <span class="input-group-addon" id="basic-addon1">Fields&nbsp;&nbsp;</span>
                         <select multiple="multiple" class="form-control" id="fields" name="fields">
                             {% for field in fields %}
-                                <option> {{ field.name }} </option>
+                                <option value="{{ field.id }}"> {{ field.name }} </option>
                             {% endfor %}
                         </select>
                     </div>

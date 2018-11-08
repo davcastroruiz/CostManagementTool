@@ -5,7 +5,7 @@ import os
 import tempfile
 from django.template.context_processors import csrf
 from dashboard.forms import UpdateDetailsForm
-from models import Theme
+from models import Theme, Project
 import xlrd
 import utility
 
@@ -110,5 +110,13 @@ def remove_field(request):
 
 def assign_fields(request):
     if request.method == 'POST':
-        print request.POST
+        project = Project.objects.get(id=int(request.POST['project']))
+        project.fields.clear()
+        try:
+            results = map(int, request.POST.getlist('fields'))
+            for i in results:
+                project.fields.add(i)
+        except:
+            print 'request_post for fields was empty'
+        project.save()
     return redirect('dashboard:admin-fields')

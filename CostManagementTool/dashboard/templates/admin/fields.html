@@ -61,6 +61,36 @@
             </table>
         </div>
     </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">Fields Assigned</h1>
+        </div>
+        <div class="panel-body">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+            <br><br>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 15%">Project</th>
+                    {% for field in fields %}
+                        <th> {{ field.name }}  </th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% projects as projects %}
+                {% for project in projects %}
+                    <tr>
+                        <td>{{ project.name }}</td>
+                        {% for field in fields %}
+                            <td> {{ field.id|assigned:project }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
     {% if request.user.is_anonymous == False %}
         {% include 'admin/components/new_field.html' %}
         {% include 'admin/components/assign_fields.html' %}
