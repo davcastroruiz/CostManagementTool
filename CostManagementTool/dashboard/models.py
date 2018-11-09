@@ -46,7 +46,7 @@ class Project(models.Model):
     name = models.TextField(max_length=50, default='default')
     owner = models.TextField(max_length=50, blank=True)
     email = models.EmailField(max_length=254)
-    fields = models.ManyToManyField(Field, null=True, blank=True)
+    fields = models.ManyToManyField(Field, blank=True)
 
     def __str__(self):
         return self.owner + ': ' + self.name

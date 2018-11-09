@@ -34,7 +34,7 @@
                                     <p>{{ project.owner }}</p>
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <a href="#" class="btn btn-sm btn-primary" role="button"
+                                            <a href="{% url 'inventory:index' project.id %}" class="btn btn-sm btn-primary" role="button"
                                                style="width: 100%">View</a>
 
                                         </div>
