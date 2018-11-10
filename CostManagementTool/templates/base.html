@@ -30,6 +30,7 @@
 {% load bootstrap_themes %}
 {% load dashboard_tags %}
 <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 {% bootstrap_styles theme=request|get_user_theme type='min.css' %}
 {% bootstrap_script %}
 
@@ -51,16 +52,6 @@
             <ul class="nav navbar-nav">
                 {% block navbar %}
                 {% endblock %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">Dev Links <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-header">In curse</li>
-                        <li><a href="{% url 'dashboard:upload-file' %}">load excel</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">To verify</li>
-                    </ul>
-                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_anonymous == False %}

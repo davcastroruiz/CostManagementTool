@@ -9,8 +9,7 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
            aria-expanded="false">Inventory <span class="caret"></span></a>
         <ul class="dropdown-menu">
-            <li class="dropdown-header">Project</li>
-            <li><a href="#" data-toggle="modal" data-target="#newProject">Create new project</a></li>
+            <li><a href="{% url 'inventory:upload-file' project.id %}">Upload a new version</a></li>
         </ul>
     </li>
 {% endblock %}
@@ -53,7 +52,4 @@
             <h1 class="panel-title">Project owner {{ project.owner }} </h1>
         </div>
     </div>
-    {% if request.user.is_anonymous == False %}
-        {% include 'admin/components/new_project.html' %}
-    {% endif %}
 {% endblock %}

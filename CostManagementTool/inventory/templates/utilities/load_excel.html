@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}
+    Load XLSX
+{% endblock %}
+{% block navbar %}
+    <li><a href="{% url 'inventory:index' project.id %}" ><i class="fas fa-backspace"></i></a></li>
+{% endblock %}
+{% block body %}
+    <div class="alert-success">{{ message }}</div>
+    <style>
+        .btn-primary:hover {
+            background: #fff;
+            color: #0171c5;
+        }
+    </style>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">Check Inventory for {{ project.name }} </h1>
+        </div>
+        <div class="panel-body">
+            <form action="{% url 'inventory:upload-file' project.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="text" name="alias"
+                               placeholder="Alias"
+                               class="form-control" required/>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="number" name="version"
+                               placeholder="version"
+                               min="0.0" step=0.1 class="form-control" required/>
+                    </div>
+                </div>
+                <br>
+                <input type="file" name="excel_file" accept=".xlsx, .xls" class="form-control" required>
+                <br>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <input type="number" name="initial_row"
+                               placeholder="Headers row: 0"
+                               min="1" class="form-control" required/>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="number" name="final_row"
+                               placeholder="Final row to read - Set 0 to read all"
+                               min="0" class="form-control" required/>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" name="sheet_names"
+                               placeholder="Separated with ; each sheet name"
+                               class="form-control" required/>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="submit" name="input_button" value="CHECK" class="form-control btn btn-primary">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if txt %}
+        <!--TEXT-AREA-->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h1 class="panel-title">Upload Inventory for {{ project.name }} </h1>
+            </div>
+            <div class="panel-body">
+                <p>* Fields: <b><span style="color: red">{% for item in project.fields.all %}
+                    {{ item.name }} {% endfor %}</span></b>, will be added if does not
+                    exists in the current excel with the information below: </p>
+                <p>Alias: <b>{{ info.alias }}</b>, version: <b>{{ info.version }}</b></p>
+                <hr>
+                <input type="submit" name="input_button" value="UPLOAD" class="form-control btn btn-primary">
+                <br>
+                <textarea id="textBox1" name="content" onkeyup="setHeight('textBox1');"
+                          onkeydown="setHeight('textBox1');" style="width:100%;">{{ txt }}</textarea>
+
+                <!--JAVASCRIPT-->
+                <script type="text/javascript">
+                    function setHeight(fieldId) {
+                        document.getElementById(fieldId).style.height = document.getElementById(fieldId).scrollHeight + 'px';
+                    }
+
+                    setHeight('textBox1');
+                </script>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
