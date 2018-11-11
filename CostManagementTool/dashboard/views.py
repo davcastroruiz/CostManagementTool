@@ -36,7 +36,7 @@ def fields(request):
 
 def save_field(request):
     if request.method == 'POST':
-        utility.save_field(name=request.POST['fieldName'], type_field=request.POST['fieldType'],
+        utility.save_field(name=request.POST['fieldName'],
                            description=request.POST['fieldDescription'])
     return redirect('dashboard:admin-fields')
 

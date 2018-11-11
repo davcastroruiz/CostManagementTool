@@ -31,7 +31,6 @@
                 <thead>
                 <tr>
                     <th style="width: 15%">Field Name</th>
-                    <th style="width: 15%">Type</th>
                     <th style="width: 65%">Description</th>
                     <th></th>
                 </tr>
@@ -41,7 +40,6 @@
                 {% for field in fields %}
                     <tr>
                         <td>{{ field.name }}</td>
-                        <td>{{ field.type }}</td>
                         <td>{{ field.description }}</td>
                         <td>
                             <form action="{% url 'dashboard:remove-field' %}" method="post"

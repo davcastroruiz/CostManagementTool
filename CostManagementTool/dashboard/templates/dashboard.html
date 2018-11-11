@@ -23,18 +23,21 @@
         </div>
         <div class="panel-body">
             Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
-        <br><br>
+            <br><br>
             {% if projects|length > 0 %}
                 <div class="row">
                     {% for project in  projects %}
                         <div class="col-sm-3">
-                            <div class="thumbnail">
-                                <div class="caption" style="text-align: center">
-                                    <h3>{{ project.name }}</h3>
-                                    <p>{{ project.owner }}</p>
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h1 class="panel-title">Project: {{ project.name }} </h1>
+                                </div>
+                                <div class="panel-body">
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <a href="{% url 'inventory:index' project.id %}" class="btn btn-sm btn-primary" role="button"
+                                            <a href="{% url 'inventory:index' project.id %}"
+                                               class="btn btn-sm btn-primary"
+                                               role="button"
                                                style="width: 100%">View</a>
 
                                         </div>
@@ -51,6 +54,9 @@
                                             </form>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="panel-footer panel-danger">
+                                    <h1 class="panel-title">Owner: {{ project.owner }} </h1>
                                 </div>
                             </div>
                         </div>

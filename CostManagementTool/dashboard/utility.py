@@ -11,8 +11,8 @@ def remove_project(_id):
     project.delete()
 
 
-def save_field(name, type_field, description):
-    field = Field(name=name, type=type_field, description=description)
+def save_field(name, description):
+    field = Field(name=name, description=description)
     field.save()
 
 

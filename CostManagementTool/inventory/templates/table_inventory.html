@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load inventory_tags %}
+{% block title %}
+    Inventory
+{% endblock %}
+<!-- Split button -->
+{% block navbar %}
+{% endblock %}
+{% block body %}
+    <style>
+        td, th {
+            white-space: nowrap;
+        }
+
+        div.dt-buttons {
+            position: absolute;
+            margin-top: 50px;
+            margin-left: -14px;
+        }
+
+        .panel .menu-bar {
+            position: absolute;
+        }
+
+        .dataTables_filter label {
+            margin-top: 10px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .dataTables_length {
+            float: right;
+            padding-bottom: 20px;
+        }
+
+        input[type="search"] {
+            width: 600px !important;
+        }
+
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css"/>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/v/bs-3.3.7/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-html5-1.5.4/cr-1.5.0/datatables.min.js"></script>
+
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h1 class="panel-title">Inventory
+                for <a href="{% url 'inventory:index' project.id %}">{{ project.name }}</a> - {{ inventory_item.alias }},
+                version: {{ inventory_item.version }}</h1>
+        </div>
+        <div class="panel menu-bar">
+            <button id="addRow" class="btn btn-default">New item</button>
+            <button id="saveChanges" class="btn btn-default">Save changes</button>
+        </div>
+
+        <div class="panel-body">
+            <div style="overflow-x:auto; margin-top: -20px">
+                <table id="example" class="display table">
+                    <thead>
+                    <tr>
+                        <th>Row</th>
+                        {% for header in headers %}
+                            <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in inventory_item.items %}
+                        <tr>
+                            <td>
+                                <button class="delete btn btn-link btn-sm"><i class="fas fa-minus"
+                                                                              style="color: darkred"></i></button>
+                                {{ forloop.counter }}</td>
+                            {% for key, i in item.items|sort_by_key %}
+                                {#                                <td ondblclick="edit(this)"><input class="form-control" value="{{ i.1 }}" disabled onblur="disable(this)"></td>#}
+                                <td onclick="edit(this)" onblur="not_editable(this)">{{ i|integer }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="panel-footer">
+            <h1 class="panel-title">Creation date {{ inventory_item.created }} | Created
+                by {{ inventory_item.created_by }} </h1>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var t = $('#example').DataTable({
+                colReorder: true,
+                dom: 'Bflrtip',
+                buttons: ['csv', 'excel', 'pdf']
+            });
+            var counter = t.data().length + 1;
+            $('#addRow').on('click', function () {
+                goto('last');
+                var elements = [counter];
+                {% for header in headers %}
+                    elements.push('');
+                {% endfor %}
+                t.row.add(elements).draw(false);
+                make_editable(counter);
+                counter++;
+            });
+            $('#example tbody').on('dblclick', '.delete', function () {
+                t.row($(this).parents('tr')).remove().draw();
+            });
+
+        });
+
+        function tableToJson() {
+            var table = document.getElementById('example');
+            var data = [];
+            $('#example').DataTable().destroy();
+            var datatable = $('#example').DataTable().data();
+
+            // first row needs to be headers
+            var headers = [];
+
+            for (var i = 0; i < table.rows[0].cells.length; i++) {
+                headers[i] = table.rows[0].cells[i].innerHTML.toLowerCase().replace(/ /gi, '');
+            }
+
+            // go through cells
+            for (var i = 0; i < datatable.length; i++) {
+
+                var tableRow = datatable[i];
+                var rowData = {};
+
+                for (var j = 0; j < tableRow.length; j++) {
+                    rowData[headers[j]] = tableRow[j];
+                }
+                delete rowData["row"];
+
+                data.push(rowData);
+            }
+
+            return data;
+        }
+
+        function edit(td) {
+            td.setAttribute('contenteditable', true);
+        }
+
+        function not_editable(td) {
+            td.removeAttribute('contenteditable');
+        }
+
+        function goto(name) {
+            var table = $('#example').DataTable();
+
+            table
+                .column('0:visible')
+                .order('asc')
+                .draw();
+
+            table.page(name).draw('page');
+        }
+
+        function make_editable(counter) {
+            var tr = document.getElementById("example").lastElementChild.lastElementChild;
+            tr.cells[0].outerHTML = '<td><button class="delete btn btn-link btn-sm"><i class="fas fa-minus" style="color: darkred"></i></button>' + counter + '</td>';
+            for (var i = 1; i < tr.cells.length; i++) {
+                var td = tr.cells[i];
+                tr.cells[i].setAttribute('contenteditable', true);
+            }
+        }
+
+        $("#saveChanges").on('click', function () {
+            var inventory_list = tableToJson();
+
+            $.ajax({
+                url: '{% url 'inventory:update-version'%}',
+                data: {
+                    'inventory_list': JSON.stringify(inventory_list),
+                    'object_id': '{% get_private_attribute inventory_item '_id' %}'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.exception);
+                    }
+
+
+                }
+            });
+
+        });
+
+
+    </script>
+{% endblock %}

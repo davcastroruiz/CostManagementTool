@@ -1,7 +1,7 @@
 from django import template
 from bootstrap_themes import list_themes
 
-from dashboard.models import Theme, Project, Field, Lists
+from dashboard.models import Theme, Project, Field
 
 register = template.Library()
 
@@ -27,15 +27,10 @@ def projects():
 
 
 @register.assignment_tag
-def get_field_types():
-    return map(list, Lists.type)
-
-
-@register.assignment_tag
 def fields():
     return Field.objects.all()
 
 
 @register.filter()
 def assigned(field_id, project):
-    return project.fields.filter(id= field_id).exists()
+    return project.fields.filter(id=field_id).exists()

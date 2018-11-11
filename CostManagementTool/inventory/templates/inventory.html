@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load dashboard_tags %}
+{% load inventory_tags %}
 {% block title %}
     Inventory
 {% endblock %}
@@ -9,7 +9,7 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
            aria-expanded="false">Inventory <span class="caret"></span></a>
         <ul class="dropdown-menu">
-            <li><a href="{% url 'inventory:upload-file' project.id %}">Upload a new version</a></li>
+            <li><a href="{% url 'inventory:check-file' project.id %}">Upload a new version</a></li>
         </ul>
     </li>
 {% endblock %}
@@ -24,18 +24,28 @@
             {% if collection|length > 0 %}
                 <table class="table">
                     <thead>
-                    <th>created</th>
-                    <th>alias</th>
-                    <th>created by</th>
-                    <th>version</th>
+                    <tr>
+                        <th>created</th>
+                        <th>alias</th>
+                        <th>created by</th>
+                        <th>version</th>
+                        <th style="text-align: center">review</th>
+                    </tr>
                     </thead>
                     <tbody>
                     {% for item in collection %}
                         <tr>
                             <td>{{ item.created }}</td>
                             <td>{{ item.alias }}</td>
-                            <td>{{ item.createdby }}</td>
+                            <td>{{ item.created_by }}</td>
                             <td>{{ item.version }}</td>
+                            <td align="center">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link" name="_id" value="{% get_private_attribute item '_id' %}"><i
+                                            class="fa fa-eye"></i></button>
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
 

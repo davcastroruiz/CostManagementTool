@@ -3,7 +3,6 @@
     Load XLSX
 {% endblock %}
 {% block navbar %}
-    <li><a href="{% url 'inventory:index' project.id %}" ><i class="fas fa-backspace"></i></a></li>
 {% endblock %}
 {% block body %}
     <div class="alert-success">{{ message }}</div>
@@ -15,10 +14,11 @@
     </style>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h1 class="panel-title">Check Inventory for {{ project.name }} </h1>
+            <h1 class="panel-title">Check Inventory for <a
+                    href="{% url 'inventory:index' project.id %}">{{ project.name }}</a></h1>
         </div>
         <div class="panel-body">
-            <form action="{% url 'inventory:upload-file' project.id %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'inventory:check-file' project.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-sm-6">
@@ -70,7 +70,14 @@
                     exists in the current excel with the information below: </p>
                 <p>Alias: <b>{{ info.alias }}</b>, version: <b>{{ info.version }}</b></p>
                 <hr>
-                <input type="submit" name="input_button" value="UPLOAD" class="form-control btn btn-primary">
+                <form action="{% url 'inventory:upload-version' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="submit" name="input_button" value="UPLOAD" class="form-control btn btn-primary">
+                    <input type="hidden" name="alias_upload" value="{{ info.alias }}">
+                    <input type="hidden" name="version_upload" value="{{ info.version }}">
+                    <input type="hidden" name="project_id" value="{{ project.id }}">
+                    <input type="hidden" name="json" value="{{ excel_translate_json }}">
+                </form>
                 <br>
                 <textarea id="textBox1" name="content" onkeyup="setHeight('textBox1');"
                           onkeydown="setHeight('textBox1');" style="width:100%;">{{ txt }}</textarea>

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render_to_response
+import ast
+import json
+
+from django.http import JsonResponse
+from django.shortcuts import render_to_response, redirect
 from pymongo import MongoClient
 from dashboard.models import Project
 import os
@@ -9,13 +13,22 @@ import tempfile
 from django.template.context_processors import csrf
 from inventory.forms import UpdateDetailsForm
 import xlrd
+import datetime
+from bson.objectid import ObjectId
 
 
 # Create your views here.
 def inventory(request, d):
-    project = Project.objects.get(id=d)
     connection = MongoClient('localhost', 27017)
     db = connection.test
+    project = Project.objects.get(id=d)
+    dictionary = dict(request=request, project=project)
+    if request.POST:
+        collection = db.cmt.find_one({'_id': ObjectId(request.POST['_id'])})
+        headers = sorted(collection['items'][0].keys())
+        dictionary.update(inventory_item=collection, headers=headers)
+        return render_to_response('table_inventory.html', dictionary)
+
     pipeline = [
         {
             '$match': {
@@ -26,17 +39,17 @@ def inventory(request, d):
                 'version': 1,
                 'alias': 1,
                 'created': 1,
-                'createdby': 1
+                'created_by': 1
             }
         }
     ]
     collection = list(db.cmt.aggregate(pipeline))
-    dictionary = dict(request=request, project=project, collection=collection)
+    dictionary.update(collection=collection)
     dictionary.update(csrf(request))
     return render_to_response('inventory.html', dictionary)
 
 
-def update_details(request, d):
+def check_details(request, d):
     global path
     message = ''
     txt = ''
@@ -99,3 +112,48 @@ def update_details(request, d):
                       excel_translate_json=excel_translate_json)
     dictionary.update(csrf(request))
     return render_to_response('utilities/load_excel.html', dictionary)
+
+
+def upload_version(request):
+    if request.method == 'POST':
+        excel_json = request.POST['json']
+        alias = request.POST['alias_upload']
+        version = request.POST['version_upload']
+        project = Project.objects.get(id=request.POST['project_id'])
+        connection = MongoClient('localhost', 27017)
+        db = connection.test
+        items = json.loads(json.dumps(ast.literal_eval(excel_json)))
+        for item in items:
+            for field in project.fields.all():
+                if field.name not in item:
+                    item.update({field.name: ''})
+
+        document = {
+            'version': version,
+            'alias': alias,
+            'created': str(datetime.datetime.today().date()),
+            'project': project.id,
+            'created_by': request.user.username,
+            'items': items
+        }
+        _id = db.cmt.insert_one(document)
+        return redirect('inventory:index', str(project.id))
+    else:
+        redirect('dashboard:index')
+
+
+def update_version(request):
+    inventory_list = request.GET['inventory_list']
+    connection = MongoClient('localhost', 27017)
+    db = connection.test
+    items = json.loads(inventory_list)
+    try:
+        db.cmt.find_one_and_update({"_id": ObjectId(request.GET['object_id'])}, {"$set": {"items": items}})
+        data = {
+            'success': True
+        }
+    except Exception as e:
+        data = {
+            'exception': e
+        }
+    return JsonResponse(data)
