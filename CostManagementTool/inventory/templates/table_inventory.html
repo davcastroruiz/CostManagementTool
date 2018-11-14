@@ -181,6 +181,7 @@
             var inventory_list = tableToJson();
 
             $.ajax({
+                type: "POST",
                 url: '{% url 'inventory:update-version'%}',
                 data: {
                     'inventory_list': JSON.stringify(inventory_list),

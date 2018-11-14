@@ -18,6 +18,8 @@ def get_user_theme(request):
         obj = Theme.objects.get(user=current_user.id)
         return obj.theme
     except:
+        theme_ = Theme(user=request.user, theme='default')
+        theme_.save()
         return 'default'
 
 

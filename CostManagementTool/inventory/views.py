@@ -6,6 +6,7 @@ import json
 
 from django.http import JsonResponse
 from django.shortcuts import render_to_response, redirect
+from django.views.decorators.csrf import csrf_exempt
 from pymongo import MongoClient
 from dashboard.models import Project
 import os
@@ -14,13 +15,18 @@ from django.template.context_processors import csrf
 from inventory.forms import UpdateDetailsForm
 import xlrd
 import datetime
+from CostManagementTool import settings
 from bson.objectid import ObjectId
 
 
+# db.createUser( { user: "testing_admin", pwd: "pwd4db",roles: ["readWrite"], mechanisms: ["SCRAM-SHA-1"] })
+# db.createUser( { user: "read_user", pwd: "read4db",roles: ["read"],mechanisms: ["SCRAM-SHA-1"] })
+
 # Create your views here.
 def inventory(request, d):
-    connection = MongoClient('localhost', 27017)
-    db = connection.test
+    connection = MongoClient(settings.DATABASE_HOST, 27017)
+    db = connection.Testing
+    db.authenticate('testing_admin', 'pwd4db')
     project = Project.objects.get(id=d)
     dictionary = dict(request=request, project=project)
     if request.POST:
@@ -120,8 +126,9 @@ def upload_version(request):
         alias = request.POST['alias_upload']
         version = request.POST['version_upload']
         project = Project.objects.get(id=request.POST['project_id'])
-        connection = MongoClient('localhost', 27017)
-        db = connection.test
+        connection = MongoClient(settings.DATABASE_HOST, 27017)
+        db = connection.Testing
+        db.authenticate('testing_admin', 'pwd4db')
         items = json.loads(json.dumps(ast.literal_eval(excel_json)))
         for item in items:
             for field in project.fields.all():
@@ -142,13 +149,15 @@ def upload_version(request):
         redirect('dashboard:index')
 
 
+@csrf_exempt
 def update_version(request):
-    inventory_list = request.GET['inventory_list']
-    connection = MongoClient('localhost', 27017)
-    db = connection.test
+    inventory_list = request.POST['inventory_list']
+    connection = MongoClient(settings.DATABASE_HOST, 27017)
+    db = connection.Testing
+    db.authenticate('testing_admin', 'pwd4db')
     items = json.loads(inventory_list)
     try:
-        db.cmt.find_one_and_update({"_id": ObjectId(request.GET['object_id'])}, {"$set": {"items": items}})
+        db.cmt.find_one_and_update({"_id": ObjectId(request.POST['object_id'])}, {"$set": {"items": items}})
         data = {
             'success': True
         }
